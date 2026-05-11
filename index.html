@@ -242,6 +242,73 @@
       .rev-stats { justify-content: flex-start; }
       .operator-revenue { padding: 32px 24px; }
     }
+
+   /* ── NEWSLETTER POPUP ── */
+#popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#popup-overlay.active { display: flex; }
+#popup-box {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  padding: 36px 32px;
+  position: relative;
+  color: #fff;
+  animation: popIn 0.25s ease;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1); }
+}
+#popup-close {
+  position: absolute; top: 14px; right: 16px;
+  background: transparent; border: none;
+  color: #888; font-size: 22px; cursor: pointer; line-height: 1;
+}
+#popup-close:hover { color: #fff; }
+.popup-tag {
+  display: inline-block; background: #00ff5e; color: #000;
+  font-weight: bold; font-size: 0.72em; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 5px 14px;
+  border-radius: 30px; margin-bottom: 16px;
+}
+#popup-box h2 {
+  font-size: 1.35em; font-weight: bold; text-transform: uppercase;
+  line-height: 1.25; margin-bottom: 12px; color: #fff;
+}
+#popup-box p.sub {
+  font-size: 0.92em; color: #aaa; line-height: 1.65; margin-bottom: 24px;
+}
+.popup-fields { display: flex; flex-direction: column; gap: 12px; }
+.popup-fields input {
+  background: #1a1a1a; border: 1px solid #333; color: #fff;
+  padding: 12px 14px; border-radius: 8px; font-size: 0.9em;
+  margin-bottom: 0;
+}
+.popup-fields input:focus { border-color: #00ff5e; outline: none; }
+#popup-submit {
+  background: #00ff5e; color: #000; font-weight: bold;
+  font-size: 0.9em; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 14px; border-radius: 30px; border: none; cursor: pointer;
+  width: 100%;
+}
+#popup-submit:hover { background: #00e053; }
+.popup-note {
+  font-size: 0.75em; color: #555; text-align: center; margin-top: 14px;
+}
+#popup-success { display: none; text-align: center; padding: 10px 0; }
+#popup-success h3 { color: #00ff5e; font-size: 1.2em; margin-bottom: 8px; }
+#popup-success p { color: #aaa; font-size: 0.9em; }
   </style>
 </head>
 <body>
@@ -473,5 +540,65 @@
   <footer>
     &copy; 2025 BATTERY BAR - Fast, Free & Convenient Phone Charging Station For Venues. All rights reserved.
   </footer>
+
+  <!-- NEWSLETTER POPUP -->
+<div id="popup-overlay">
+  <div id="popup-box">
+    <button id="popup-close" aria-label="Close">✕</button>
+    <span class="popup-tag">Free Newsletter</span>
+    <h2>Interested in starting your own powerbank vending business?</h2>
+    <p class="sub">Sign up to our free newsletter for key market insights and <strong style="color:#00ff5e;">5% off your first order</strong> of stations.</p>
+    <div id="popup-form">
+      <div class="popup-fields">
+        <input type="text"  id="popup-name"  placeholder="Your name" />
+        <input type="email" id="popup-email" placeholder="Your email address" />
+        <button id="popup-submit">Get 5% Off &amp; Subscribe</button>
+      </div>
+      <p class="popup-note">No spam. Unsubscribe anytime.</p>
+    </div>
+    <div id="popup-success">
+      <h3>You're in! ⚡</h3>
+      <p>Check your inbox — your 5% discount is on its way.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var POPUP_KEY = 'bb_popup_seen';
+  var MAILTO    = 'shadyelhosseini1@gmail.com';
+
+  function show(){ document.getElementById('popup-overlay').classList.add('active'); }
+  function hide(){ document.getElementById('popup-overlay').classList.remove('active'); }
+
+  if(!localStorage.getItem(POPUP_KEY)){
+    setTimeout(show, 2000);
+  }
+
+  document.getElementById('popup-close').addEventListener('click', function(){
+    localStorage.setItem(POPUP_KEY, '1');
+    hide();
+  });
+
+  document.getElementById('popup-overlay').addEventListener('click', function(e){
+    if(e.target === this){ localStorage.setItem(POPUP_KEY,'1'); hide(); }
+  });
+
+  document.getElementById('popup-submit').addEventListener('click', function(){
+    var name  = document.getElementById('popup-name').value.trim();
+    var email = document.getElementById('popup-email').value.trim();
+    if(!email || !email.includes('@')){ alert('Please enter a valid email address.'); return; }
+
+    var subject = encodeURIComponent('Battery Bar Newsletter Sign-Up');
+    var body    = encodeURIComponent('Name: ' + (name||'Not provided') + '\nEmail: ' + email);
+    window.open('mailto:' + MAILTO + '?subject=' + subject + '&body=' + body);
+
+    document.getElementById('popup-form').style.display = 'none';
+    document.getElementById('popup-success').style.display = 'block';
+    localStorage.setItem(POPUP_KEY, '1');
+    setTimeout(hide, 3000);
+  });
+})();
+</script>
 </body>
 </html>
