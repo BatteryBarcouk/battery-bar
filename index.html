@@ -585,20 +585,25 @@
   });
 
   document.getElementById('popup-submit').addEventListener('click', function(){
-    var name  = document.getElementById('popup-name').value.trim();
-    var email = document.getElementById('popup-email').value.trim();
-    if(!email || !email.includes('@')){ alert('Please enter a valid email address.'); return; }
+  var name  = document.getElementById('popup-name').value.trim();
+  var email = document.getElementById('popup-email').value.trim();
+  if(!email || !email.includes('@')){ alert('Please enter a valid email address.'); return; }
 
-    var subject = encodeURIComponent('Battery Bar Newsletter Sign-Up');
-    var body    = encodeURIComponent('Name: ' + (name||'Not provided') + '\nEmail: ' + email);
-    window.open('mailto:' + MAILTO + '?subject=' + subject + '&body=' + body);
-
-    document.getElementById('popup-form').style.display = 'none';
-    document.getElementById('popup-success').style.display = 'block';
-    localStorage.setItem(POPUP_KEY, '1');
-    setTimeout(hide, 3000);
+  fetch('https://formspree.io/f/xgvzbjlw', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: name, email: email, _subject: 'Newsletter Sign-Up' })
+  }).then(function(res){
+    if(res.ok){
+      document.getElementById('popup-form').style.display = 'none';
+      document.getElementById('popup-success').style.display = 'block';
+      localStorage.setItem(POPUP_KEY, '1');
+      setTimeout(hide, 3000);
+    } else {
+      alert('Something went wrong, please try again.');
+    }
   });
-})();
+});
 </script>
 </body>
 </html>
